@@ -4,32 +4,24 @@ pipeline {
 
     environment {
         NODE_VERSION = '20'
-        PORT = "8003"   // Yeh 8003 set kar diya
+        PORT = "8003"   
         IMAGE_NAME = "aayush701jha/my-app"
         CONTAINER_NAME = "my-container"
     }
 
     stages {
-        stage('Hello') {
-            steps {
-                script {
-                    hello()
-                }
-            }
-        }
-
         stage('Checkout Code') {
             steps {
-                script {
-                    checkoutCode('https://github.com/aayush701jha/docker-node-app', 'docker-deployment', 'Jenkins-PAT')
-                }
+                git branch: 'main', 
+                    credentialsId: 'Jenkins-PAT', 
+                    url: 'https://github.com/aayush701jha/docker-node-app.git'
             }
         }
 
         stage('Login to Docker Hub') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                    sh 'docker login -u $DOCKER_USER -p $DOCKER_PASS'
+                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
                 }
             }
         }
@@ -55,7 +47,7 @@ pipeline {
 
         stage('Running New Container on Port 8003') {
             steps {
-                sh 'docker run -d -p 8003:8003 --name $CONTAINER_NAME $IMAGE_NAME'
+                sh 'docker run -d -p 8003:3000 --name $CONTAINER_NAME $IMAGE_NAME'
             }
         }
 

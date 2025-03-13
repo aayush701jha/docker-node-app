@@ -1,20 +1,18 @@
-# 1️⃣ Node.js ka base image use kar raha hai
+# Base image
 FROM node:20.11.1  
 
-# 2️⃣ Working directory set kar raha hai
+# Set working directory
 WORKDIR /app  
 
-# 3️⃣ Package.json aur package-lock.json copy kar raha hai
-COPY package*.json ./  
-
-# 4️⃣ Dependencies install kar raha hai
+# Copy package.json and install dependencies
+COPY package.json .  
 RUN npm install  
 
-# 5️⃣ Baaki saara code copy kar raha hai
+# Copy rest of the files
 COPY . .  
 
-# 6️⃣ Correct port expose kar raha hai (8003)
-EXPOSE 8003  
+# Expose port
+EXPOSE 3000  
 
-# 7️⃣ App start kar raha hai
+# Start app
 CMD ["npm", "start"]
